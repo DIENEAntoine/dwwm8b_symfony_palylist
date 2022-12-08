@@ -1,0 +1,56 @@
+{% extends "base.html.twig" %}
+
+{% block title %}- Acceuil{% endblock %}
+
+{% block h1 %}Mes kifs du moment{% endblock %}
+
+
+{% block main %}
+
+{% for message in app.flashes('success')%}
+    <div class="alert alert-success" role="alert">
+        {{ message }}
+    </div>
+{% endfor %}
+
+<div class="d-flex justify-content-end align-items-center my-3">
+    <a href="{{ path('song.create') }}" class="btn btn-primary">Nouveau son</a>
+</div>
+
+{% if songs|length == 0 %}
+    <p>La liste est vide</p>
+    {% else %}
+        <div class="table-responsive">
+            <table class="text-center table table-striped table-hover">
+                <thead class="bg-dark text-white">
+                    <tr>
+                        <th>Id</th>
+                        <th>Titre</th>
+                        <th>Artiste</th>
+                        <th>Note</th>
+                        <th>Options</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for song in songs %}
+                        <tr>
+                            <td>{{ song.id }}</td>
+                            <td>{{ song.title }}</td>
+                            <td>{{ song.artists }}</td>
+                            <td>{{ song.score ? song.score : '--'}}</td>
+                            <td>
+                                <a href="{{ path('song.edit', {'id' : song.id}) }}" class="btn btn-sm btn-secondary">Modifier</a>
+                                <form method="POST" action="{{ path('song.delete', {'id' : song.id}) }}" class="d-inline">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token('song_' ~ song.id) }}">
+                                    <input type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Confirmer la supression?')" value="Supprimer">
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+{% endif %}
+
+{% endblock %}
